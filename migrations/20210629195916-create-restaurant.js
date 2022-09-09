@@ -57,6 +57,10 @@ module.exports = {
         ],
         defaultValue: 'offline'
       },
+      isInexpensive: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

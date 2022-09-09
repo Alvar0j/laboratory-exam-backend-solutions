@@ -32,6 +32,7 @@ exports.create = async function (req, res) {
     }
     try {
       newProduct = await newProduct.save()
+      updateRestaurantInexpensiveness(newProduct.restaurantId)
       res.json(newProduct)
     } catch (err) {
       if (err.name.includes('ValidationError')) {
@@ -41,6 +42,29 @@ exports.create = async function (req, res) {
       }
     }
   }
+}
+
+const updateRestaurantInexpensiveness = async function (restaurantId) {
+  const resultOtherRestaurants = await Product.findAll({
+    where: {
+      restaurantId: { [Sequelize.Op.ne]: restaurantId }
+    },
+    attributes: [
+      [Sequelize.fn('AVG', Sequelize.col('price')), 'computedAvgPrice']
+    ]
+  })
+  const resultCurrentRestaurant = await Product.findAll({
+    where: {
+      restaurantId: restaurantId
+    },
+    attributes: [
+      [Sequelize.fn('AVG', Sequelize.col('price')), 'computedAvgPrice']
+    ]
+  })
+  const avgPriceOtherRestaurants = resultOtherRestaurants[0].dataValues.computedAvgPrice
+  const avgPriceCurrentRestaurant = resultCurrentRestaurant[0].dataValues.computedAvgPrice
+  const isInexpensive = avgPriceCurrentRestaurant < avgPriceOtherRestaurants
+  Restaurant.update({ isInexpensive: isInexpensive }, { where: { id: restaurantId } })
 }
 
 exports.update = async function (req, res) {
