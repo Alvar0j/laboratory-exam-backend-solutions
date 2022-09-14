@@ -45,26 +45,28 @@ exports.create = async function (req, res) {
 }
 
 const updateRestaurantInexpensiveness = async function (restaurantId) {
-  const resultOtherRestaurants = await Product.findAll({
+  const queryResultOtherRestaurantsAvgPrice = await Product.findOne({
     where: {
       restaurantId: { [Sequelize.Op.ne]: restaurantId }
     },
     attributes: [
-      [Sequelize.fn('AVG', Sequelize.col('price')), 'computedAvgPrice']
+      [Sequelize.fn('AVG', Sequelize.col('price')), 'avgPrice']
     ]
   })
-  const resultCurrentRestaurant = await Product.findAll({
+  const queryResultCurrentRestaurantAvgPrice = await Product.findOne({
     where: {
       restaurantId: restaurantId
     },
     attributes: [
-      [Sequelize.fn('AVG', Sequelize.col('price')), 'computedAvgPrice']
+      [Sequelize.fn('AVG', Sequelize.col('price')), 'avgPrice']
     ]
   })
-  const avgPriceOtherRestaurants = resultOtherRestaurants[0].dataValues.computedAvgPrice
-  const avgPriceCurrentRestaurant = resultCurrentRestaurant[0].dataValues.computedAvgPrice
-  const isInexpensive = avgPriceCurrentRestaurant < avgPriceOtherRestaurants
-  Restaurant.update({ isInexpensive: isInexpensive }, { where: { id: restaurantId } })
+  if (queryResultCurrentRestaurantAvgPrice !== null && queryResultOtherRestaurantsAvgPrice !== null) {
+    const avgPriceOtherRestaurants = queryResultOtherRestaurantsAvgPrice.dataValues.avgPrice
+    const avgPriceCurrentRestaurant = queryResultCurrentRestaurantAvgPrice.dataValues.avgPrice
+    const isInexpensive = avgPriceCurrentRestaurant < avgPriceOtherRestaurants
+    Restaurant.update({ isInexpensive: isInexpensive }, { where: { id: restaurantId } })
+  }
 }
 
 exports.update = async function (req, res) {
