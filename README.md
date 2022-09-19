@@ -1,4 +1,5 @@
 # laboratory-exam-backend-solutions
-Solutions for the back-end part. Each turn and version of the solution will have the following format: morning/afternoon/english-version-X-version-description (e.g: morning-version-2-new-endpoints)
+Enunciado: [Septiembre 2022-económicos.pdf](https://github.com/IISSI2-IS-profs/laboratory-exam-backend-solutions/files/9596841/Septiembre.2022-economicos.pdf)
+Statement: [September 2022-inExpensiveness.pdf](https://github.com/IISSI2-IS-profs/laboratory-exam-backend-solutions/files/9596844/September.2022-inExpensiveness.pdf)
 
-Please, mark with a comment // SOLUTION every part of the code added to solve the exam so it can be easily identified by the rest of profs.
+Solutions for the back-end part
